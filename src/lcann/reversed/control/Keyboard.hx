@@ -1,7 +1,8 @@
-package lcann.reversed;
+package lcann.reversed.control;
 
 import js.Browser;
 import js.html.KeyboardEvent;
+
 
 /**
  * ...

@@ -1,9 +1,9 @@
 package lcann.reversed;
 
-import js.html.CanvasRenderingContext2D;
 import js.Browser;
-import js.html.KeyboardEvent;
+import js.html.CanvasRenderingContext2D;
 import lcann.reversed.background.BackgroundScroll;
+import lcann.reversed.control.Controls;
 import lcann.reversed.enemy.Enemy;
 import lcann.reversed.enemy.EnemyKamikazi;
 import lcann.reversed.enemy.EnemyOneShot;
@@ -26,51 +26,53 @@ class PlayRoom extends GameRoom{
 	private var farBack:BackgroundScroll;
 	private var nearBack:BackgroundScroll;
 	
+	private var control:Controls;
 	private var player:Player;
 	private var bestScore:Int;
 	private var lastScore:Int;
 	private var menu:Bool;
 	
 	public function new(width:Float, height:Float) {
+		control = new Controls();
+		
 		nextSet = new List<Enemy>();
 		super(width, height - 24);
 		
 		farBack = new BackgroundScroll(width, height, width / 4, 128, 12, 10, "#131313");
 		nearBack = new BackgroundScroll(width, height, width / 1.5, 128, 15, 10, "#212121");
-		
+		#if airconsole
+		bestScore = 0;
+		#else
 		bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		#end
 		lastScore = 0;
 	}
 	
 	override public function restart():Void {
+		#if !airconsole
 		bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		#end
 		
 		if (player != null) {
 			lastScore = player.score;	
-			if(lastScore > bestScore){
+			if (lastScore > bestScore) {
+				#if !airconsole
 				Browser.window.localStorage.setItem("lcr_score", Std.string(player.score));
+				#end
 				bestScore = lastScore;
 			}
 		}
 		
 		super.restart();
 		
-		player = new Player();
+		player = new Player(control);
 		add(player, "player");
 		
 		waveDifficultyPerSecond = 0;
 		waveTimer = 0;
 		waveDifficultyAccumulator = 0;
 		
-		Browser.window.addEventListener("keydown", checkStart);
 		menu = true;
-	}
-	
-	private function checkStart(e:KeyboardEvent):Void{
-		if (e.keyCode == KeyboardEvent.DOM_VK_Z) {
-			Browser.window.removeEventListener("keydown", checkStart);		
-			start();
-		}
 	}
 	
 	private function start():Void{
@@ -151,8 +153,9 @@ class PlayRoom extends GameRoom{
 			//queue next set
 			createNextSet();
 		}
-		
+		#if !airconsole
 		c.font = "bold 12px Arial";
+		#end
 		c.fillStyle = "#696969";
 		c.fillRect(0, height, width, 24);
 		c.fillStyle = "#0000FF";
@@ -170,8 +173,9 @@ class PlayRoom extends GameRoom{
 			c.fillText(Std.string(i), lx - 12, height + 16);
 		}
 		c.strokeRect(4, height + 4, bombMeterWidth, 16);
-		
+		#if !airconsole
 		c.font = "bold 20px Arial";
+		#end
 		c.fillText("Score: " + player.score, width * 0.5 + 4, height + 20);
 		
 		if(menu){
@@ -182,7 +186,11 @@ class PlayRoom extends GameRoom{
 			
 			c.fillStyle = "#FFFFFF";
 			
+			#if airconsole
+			c.fillText("Press 'Shoot' to Start", width / 2 - c.measureText("Press 'Z' to Start").width / 2, height * 0.33);
+			#else
 			c.fillText("Press 'Z' to Start", width / 2 - c.measureText("Press 'Z' to Start").width / 2, height * 0.33);
+			#end
 			
 			var scoreText = "Best Score: " + bestScore;
 			c.fillText(scoreText, width / 2 - c.measureText(scoreText).width / 2, height * 0.66);
@@ -191,11 +199,17 @@ class PlayRoom extends GameRoom{
 				c.fillText(scoreText, width / 2 - c.measureText(scoreText).width / 2, height * 0.66 + 24);
 			}
 			
+			#if !airconsole
 			c.font = "bold 15px Arial";
 			c.fillText("Move = Arrow Keys", 20, height * 0.83);
 			c.fillText("Shoot = Z", 20, height * 0.83 + 24);
 			c.fillText("Chrono Bomb = X", 20, height * 0.83 + 48);
 			c.fillText("Focus = L Shift", 20, height * 0.83 + 72);
+			#end
+			
+			if(control.isShooting()){
+				start();
+			}
 		}
 	}
 	

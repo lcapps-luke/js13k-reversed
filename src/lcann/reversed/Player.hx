@@ -1,11 +1,11 @@
 package lcann.reversed;
-import js.html.CanvasRenderingContext2D;
-import js.html.Image;
-import js.html.KeyboardEvent;
-import lcann.reversed.GameRoom;
-import lcann.reversed.enemy.EnemyBullet;
-import lcann.reversed.enemy.Enemy;
 import js.Browser;
+import js.html.CanvasRenderingContext2D;
+import lcann.reversed.control.ControlMovement;
+import lcann.reversed.control.Controls;
+import lcann.reversed.enemy.Enemy;
+import lcann.reversed.enemy.EnemyBullet;
+import lcann.reversed.GameRoom;
 
 /**
  * ...
@@ -19,6 +19,8 @@ class Player extends GameObject {
 	private static var fireDelay:Float = 0.5;
 	private static var bombDuration:Float = 5;
 	
+	private var control:Controls;
+	
 	public var graze(default, null):Int;
 	public var score(default, null):Int;
 	
@@ -29,7 +31,7 @@ class Player extends GameObject {
 	
 	private var alive:Bool;
 	
-	public function new() {
+	public function new(controls:Controls) {
 		super();
 		
 		fireTimer = 0;
@@ -40,6 +42,8 @@ class Player extends GameObject {
 		bombTimer = 0;
 		
 		alive = true;
+		
+		this.control = controls;
 	}
 	
 	override function set_room(room:GameRoom):GameRoom {
@@ -58,7 +62,7 @@ class Player extends GameObject {
 		
 		//Shooting
 		fireTimer += s;
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_Z)){
+		if(control.isShooting()){
 			if(fireTimer >= fireDelay){
 				fireTimer = 0;
 				var bullet:PlayerBullet = new PlayerBullet();
@@ -77,7 +81,7 @@ class Player extends GameObject {
 			bombTimer -= s;
 		}
 		var bomb = false;
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_X)){
+		if(control.isBombing()){
 			if(bombCooldown <= 0 && bombQty >= 1){
 				bombCooldown = bombDuration * 4;
 				bomb = true;
@@ -124,29 +128,23 @@ class Player extends GameObject {
 		}
 	}
 	
-	private function doControls():Void{
-		var mx:Float = 0.0;
-		var my:Float = 0.0;
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_UP) && y > grazeRadius){
-			my -= 1.0;
-		}
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_RIGHT) && x < room.width - grazeRadius){
-			mx += 1.0;
-		}
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_DOWN) &&  y < room.height - grazeRadius){
-			my += 1.0;
-		}
-		if(Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_LEFT) && x > grazeRadius){
-			mx -= 1.0;
-		}
-		if(mx != 0.0 || my != 0.0){
-			var md:Float = Math.atan2(my, mx);
-			var ms:Float = Main.keyboard.isKeyDown(KeyboardEvent.DOM_VK_SHIFT) ? focusMoveSpeed : baseMoveSpeed;
-			
-			xSpeed = Math.cos(md) * ms;
-			ySpeed = Math.sin(md) * ms;
-		}else{
+	private function doControls():Void {
+		var ctrl:ControlMovement = control.getMovement();
+		var spd:Float = (control.isFocus() ? focusMoveSpeed : baseMoveSpeed);
+		
+		xSpeed = ctrl.x * spd;
+		ySpeed = ctrl.y * spd;
+		
+		if(xSpeed < 0 && x < grazeRadius){
 			xSpeed = 0;
+		}
+		if(xSpeed > 0 && x > room.width - grazeRadius){
+			xSpeed = 0;
+		}
+		if(ySpeed < 0 && y < grazeRadius){
+			ySpeed = 0;
+		}
+		if(ySpeed > 0 && y > room.height - grazeRadius){
 			ySpeed = 0;
 		}
 	}
