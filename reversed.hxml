@@ -1,0 +1,5 @@
+-cp src
+-main lcann.reversed.Main
+-dce full
+--js bin\Reversed.js
+--cmd java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file=bin\Reversed_min.js bin\Reversed.js
