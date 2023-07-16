@@ -9,9 +9,9 @@ class ReversableGameObject extends GameObject{
 	private var lifeTimer:Float;
 	private var deathTimer:Float;
 	
-	private static var maxReverseDuration = 10;
+	private static inline var maxReverseDuration = 10;
 	private var reverseTimer:Float;
-	private static var easeTime:Float = 0.5;
+	private static inline var easeTime:Float = 0.5;
 	private var timeSpeed:Float;
 	
 	

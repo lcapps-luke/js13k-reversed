@@ -1,6 +1,5 @@
 package lcann.reversed;
 import js.html.CanvasRenderingContext2D;
-import js.html.Image;
 import js.html.KeyboardEvent;
 import lcann.reversed.GameRoom;
 import lcann.reversed.enemy.EnemyBullet;
@@ -12,12 +11,12 @@ import js.Browser;
  * @author Luke Cann
  */
 class Player extends GameObject {
-	private static var baseMoveSpeed:Float = 80;
-	private static var focusMoveSpeed:Float = 50;
-	private static var grazeRadius:Float = 16;
-	private static var hitRadius:Float = 2;
-	private static var fireDelay:Float = 0.5;
-	private static var bombDuration:Float = 5;
+	private static inline var baseMoveSpeed:Float = 200;
+	private static inline var focusMoveSpeed:Float = 150;
+	private static inline var grazeRadius:Float = 16;
+	private static inline var hitRadius:Float = 2;
+	private static inline var fireDelay:Float = 0.5;
+	private static inline var bombDuration:Float = 5;
 	
 	public var graze(default, null):Int;
 	public var score(default, null):Int;

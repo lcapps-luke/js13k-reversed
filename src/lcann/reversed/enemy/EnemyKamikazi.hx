@@ -10,7 +10,7 @@ class EnemyKamikazi extends Enemy{
 	public function new() {
 		super();
 		life = 2;
-		ySpeed = 30;
+		ySpeed = 60;
 		value = 2;
 	}
 	

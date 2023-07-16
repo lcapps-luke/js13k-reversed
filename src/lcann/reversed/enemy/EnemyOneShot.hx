@@ -9,8 +9,8 @@ class EnemyOneShot extends EnemyShooter{
 	public function new() {
 		super();
 		life = 5;
-		ySpeed = 20;
-		shootTimer = 3;
+		ySpeed = 40;
+		shootTimer = 2;
 		value = 3;
 	}
 	
@@ -20,10 +20,10 @@ class EnemyOneShot extends EnemyShooter{
 		var b:EnemyBullet = new EnemyBullet(Assets.bulletNormal);
 		b.x = x;
 		b.y = y;
-		b.addForce(40, directionToObject(target));
+		b.addForce(80, directionToObject(target));
 		room.add(b, "bullet");
 		
-		shootTimer = 5;
+		shootTimer = 2;
 	}
 	
 	override function draw(c:CanvasRenderingContext2D):Void {

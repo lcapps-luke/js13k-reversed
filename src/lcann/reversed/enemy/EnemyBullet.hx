@@ -2,7 +2,6 @@ package lcann.reversed.enemy;
 
 import js.html.CanvasRenderingContext2D;
 import js.html.Image;
-import lcann.reversed.GameObject;
 import lcann.reversed.ReversableGameObject;
 
 /**

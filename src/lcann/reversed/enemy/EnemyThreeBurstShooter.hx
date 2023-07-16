@@ -10,8 +10,8 @@ class EnemyThreeBurstShooter extends EnemyShooter{
 
 	public function new() {
 		super();
-		shootTimer = 3;
-		ySpeed = 20;
+		shootTimer = 2;
+		ySpeed = 40;
 		value = 4;
 	}
 	
@@ -24,11 +24,11 @@ class EnemyThreeBurstShooter extends EnemyShooter{
 			var b = new EnemyBullet(Assets.bulletNormal);
 			b.x = x;
 			b.y = y;
-			b.addForce(30, startDir + (spread * i));
+			b.addForce(60, startDir + (spread * i));
 			room.add(b, "bullet");
 		}
 		
-		shootTimer = 7;
+		shootTimer = 3;
 	}
 	
 	override function draw(c:CanvasRenderingContext2D):Void {

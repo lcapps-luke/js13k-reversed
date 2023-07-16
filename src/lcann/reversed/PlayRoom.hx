@@ -15,13 +15,14 @@ import lcann.reversed.enemy.EnemyTunnelShooter;
  * @author Luke Cann
  */
 class PlayRoom extends GameRoom{	
-	private static var maxSetDistance:Float = 10;
-	private static var minSetDistance:Float = 3;
+	private static inline var maxSetDistance:Float = 5;
+	private static inline var minSetDistance:Float = 1;
 	private var waveDifficultyPerSecond:Float;
 	private var waveTimer:Float;
 	private var waveDifficultyAccumulator:Float;
 	private var nextSet:List<Enemy>;
 	private var nextSetDifficulty:Int;
+	private var waveQty = 0;
 	
 	private var farBack:BackgroundScroll;
 	private var nearBack:BackgroundScroll;
@@ -35,20 +36,31 @@ class PlayRoom extends GameRoom{
 		nextSet = new List<Enemy>();
 		super(width, height - 24);
 		
-		farBack = new BackgroundScroll(width, height, width / 4, 128, 12, 10, "#131313");
-		nearBack = new BackgroundScroll(width, height, width / 1.5, 128, 15, 10, "#212121");
+		farBack = new BackgroundScroll(width, height, width / 4, 128, 25, 10, "#131313");
+		nearBack = new BackgroundScroll(width, height, width / 1.5, 128, 50, 10, "#212121");
 		
-		bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		try{
+			bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		}catch(e:Dynamic){
+			bestScore = 0;
+		}
 		lastScore = 0;
 	}
 	
 	override public function restart():Void {
-		bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		try{
+			bestScore = Std.parseInt(Browser.window.localStorage.getItem("lcr_score"));
+		}catch(e:Dynamic){
+			bestScore = 0;
+		}
 		
 		if (player != null) {
 			lastScore = player.score;	
 			if(lastScore > bestScore){
-				Browser.window.localStorage.setItem("lcr_score", Std.string(player.score));
+				try{
+					Browser.window.localStorage.setItem("lcr_score", Std.string(player.score));
+				}catch(e:Dynamic){
+				}
 				bestScore = lastScore;
 			}
 		}
@@ -61,6 +73,10 @@ class PlayRoom extends GameRoom{
 		waveDifficultyPerSecond = 0;
 		waveTimer = 0;
 		waveDifficultyAccumulator = 0;
+		waveQty = 0;
+
+		nextSet.clear();
+		nextSetDifficulty = 0;
 		
 		Browser.window.addEventListener("keydown", checkStart);
 		menu = true;
@@ -74,11 +90,16 @@ class PlayRoom extends GameRoom{
 	}
 	
 	private function start():Void{
-		waveDifficultyPerSecond = 0.34;
+		waveDifficultyPerSecond = 0.5;
 		waveTimer = 0;
 		waveDifficultyAccumulator = 0;
 		
-		createNextSet();
+		//createNextSet();
+
+		nextSetDifficulty = 0;
+		queueEnemy(1, 1);
+
+
 		menu = false;
 	}
 	
@@ -90,13 +111,13 @@ class PlayRoom extends GameRoom{
 		var maxDifficulty = waveDifficultyPerSecond * maxSetDistance;
 		var d:Int = Math.floor(minDifficulty + Math.random() * (maxDifficulty - minDifficulty));
 		
-		//create up to three enemys to match d (difficulty)
+		//create up to three enemies to match d (difficulty)
 		var r:Int = Math.ceil(Math.random() * 3);
 		for(i in 0...r){
 			nextSetDifficulty += queueEnemy(d - nextSetDifficulty, r - i);
 		}
 		
-		waveDifficultyPerSecond += 0.002;
+		waveDifficultyPerSecond += 0.005;
 	}
 	
 	private function queueEnemy(max:Int, remaning:Int):Int {

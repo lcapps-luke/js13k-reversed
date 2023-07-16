@@ -19,8 +19,8 @@ class EnemyTunnelShooter extends EnemyShooter{
 		
 		life = 5;
 		
-		ySpeed = 20;
-		shootTimer = 5;
+		ySpeed = 40;
+		shootTimer = 3;
 		
 		shootQty = 10;
 		targetDirection = 0;
@@ -48,18 +48,18 @@ class EnemyTunnelShooter extends EnemyShooter{
 		var lb = new EnemyBullet(Assets.bulletSmall, 4, true);
 		lb.x = x + lx;
 		lb.y = y + ly;
-		lb.addForce(30, targetDirection);
+		lb.addForce(60, targetDirection);
 		room.add(lb, "bullet");
 		
 		var rb = new EnemyBullet(Assets.bulletSmall, 4, true);
 		rb.x = x + rx;
 		rb.y = y + ry;
-		rb.addForce(30, targetDirection);
+		rb.addForce(60, targetDirection);
 		room.add(rb, "bullet");
 		
 		shootQty -= 1;
 		if(shootQty <= 0){
-			shootTimer = 5;
+			shootTimer = 3;
 			shootQty = 10;
 			ySpeed = 20;
 		}else{

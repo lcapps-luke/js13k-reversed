@@ -1,6 +1,5 @@
 package lcann.reversed;
 import js.html.Image;
-import js.html.ImageElement;
 
 /**
  * ...
